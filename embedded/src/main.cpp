@@ -42,26 +42,28 @@ bool deviceConnected = false;
 
 class MyServerCallbacks : public NimBLEServerCallbacks
 {
-  void onConnect(NimBLEServer *pServer)
+  void onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo) override
   {
     deviceConnected = true;
     Serial.println("Client connected");
-  };
+    Serial.printf("Client address: %s\n", connInfo.getAddress().toString().c_str());
+  }
 
-  void onDisconnect(NimBLEServer *pServer)
+  void onDisconnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo, int reason) override
   {
     deviceConnected = false;
     Serial.println("Client disconnected");
-    // Restart advertising
-    pServer->startAdvertising();
+    // pServer->startAdvertising();
+    NimBLEDevice::startAdvertising();
+    Serial.println("Advertising restarted");
   }
-};
+} serverCallbacks;
 
 bool startBluetooth()
 {
   NimBLEDevice::init(DEVICE_NAME);
   pServer = NimBLEDevice::createServer();
-  pServer->setCallbacks(new MyServerCallbacks());
+  pServer->setCallbacks(&serverCallbacks);
 
   // Create the service
   NimBLEService *pService = pServer->createService(SERVICE_UUID);
@@ -91,7 +93,9 @@ bool startBluetooth()
 
   // Start advertising
   NimBLEAdvertising *pAdvertising = pServer->getAdvertising();
+  pAdvertising->setName(DEVICE_NAME);
   pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->enableScanResponse(true);
   pAdvertising->start();
   Serial.println("Bluetooth initialized and advertising");
   return true;
