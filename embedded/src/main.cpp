@@ -4,6 +4,7 @@
 #include <Wire.h>
 #include <NimBLEDevice.h>
 
+#define DEVICE_NAME "Barbeloni"
 #define SERVICE_UUID "832546eb-9a15-42e8-b250-7d2b66aa9ad5"
 #define VELOCITY_CHAR_UUID "bf6af529-becb-4509-8258-b144d38c6715"
 #define POWER_CHAR_UUID "7e2421b5-09b6-4e66-acc3-1982f6092a91"
@@ -58,7 +59,7 @@ class MyServerCallbacks : public NimBLEServerCallbacks
 
 bool startBluetooth()
 {
-  NimBLEDevice::init("BARba"); // Give your device a name
+  NimBLEDevice::init(DEVICE_NAME);
   pServer = NimBLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
 
