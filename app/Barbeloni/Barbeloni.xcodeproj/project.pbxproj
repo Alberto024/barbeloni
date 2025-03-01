@@ -6,43 +6,35 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXContainerItemProxy section */
-		D3E36CC92D6F088F006A5D1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D3E36CAF2D6F088D006A5D1B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D3E36CB62D6F088E006A5D1B;
-			remoteInfo = Barbeloni;
-		};
-		D3E36CD32D6F088F006A5D1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D3E36CAF2D6F088D006A5D1B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = D3E36CB62D6F088E006A5D1B;
-			remoteInfo = Barbeloni;
-		};
-/* End PBXContainerItemProxy section */
+/* Begin PBXBuildFile section */
+		D3160ADF2D707EA60038F3EA /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = D3160ADE2D707EA60038F3EA /* GoogleSignIn */; };
+		D3160AE12D707EA60038F3EA /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = D3160AE02D707EA60038F3EA /* GoogleSignInSwift */; };
+		D3E36D042D702D44006A5D1B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D3E36D032D702D44006A5D1B /* FirebaseAnalytics */; };
+		D3E36D062D702D44006A5D1B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D3E36D052D702D44006A5D1B /* FirebaseAuth */; };
+		D3E36D082D702D44006A5D1B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = D3E36D072D702D44006A5D1B /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D3E36CB72D6F088E006A5D1B /* Barbeloni.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Barbeloni.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3E36CC82D6F088F006A5D1B /* BarbeloniTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BarbeloniTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		D3E36CD22D6F088F006A5D1B /* BarbeloniUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BarbeloniUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		D3160AD82D707B0A0038F3EA /* Exceptions for "Barbeloni" folder in "Barbeloni" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = D3E36CB62D6F088E006A5D1B /* Barbeloni */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D3E36CB92D6F088E006A5D1B /* Barbeloni */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				D3160AD82D707B0A0038F3EA /* Exceptions for "Barbeloni" folder in "Barbeloni" target */,
+			);
 			path = Barbeloni;
-			sourceTree = "<group>";
-		};
-		D3E36CCB2D6F088F006A5D1B /* BarbeloniTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BarbeloniTests;
-			sourceTree = "<group>";
-		};
-		D3E36CD52D6F088F006A5D1B /* BarbeloniUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = BarbeloniUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -52,20 +44,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3E36CC52D6F088F006A5D1B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3E36CCF2D6F088F006A5D1B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				D3160AE12D707EA60038F3EA /* GoogleSignInSwift in Frameworks */,
+				D3E36D042D702D44006A5D1B /* FirebaseAnalytics in Frameworks */,
+				D3160ADF2D707EA60038F3EA /* GoogleSignIn in Frameworks */,
+				D3E36D062D702D44006A5D1B /* FirebaseAuth in Frameworks */,
+				D3E36D082D702D44006A5D1B /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,8 +59,6 @@
 			isa = PBXGroup;
 			children = (
 				D3E36CB92D6F088E006A5D1B /* Barbeloni */,
-				D3E36CCB2D6F088F006A5D1B /* BarbeloniTests */,
-				D3E36CD52D6F088F006A5D1B /* BarbeloniUITests */,
 				D3E36CB82D6F088E006A5D1B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,8 +67,6 @@
 			isa = PBXGroup;
 			children = (
 				D3E36CB72D6F088E006A5D1B /* Barbeloni.app */,
-				D3E36CC82D6F088F006A5D1B /* BarbeloniTests.xctest */,
-				D3E36CD22D6F088F006A5D1B /* BarbeloniUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,56 +91,15 @@
 			);
 			name = Barbeloni;
 			packageProductDependencies = (
+				D3E36D032D702D44006A5D1B /* FirebaseAnalytics */,
+				D3E36D052D702D44006A5D1B /* FirebaseAuth */,
+				D3E36D072D702D44006A5D1B /* FirebaseFirestore */,
+				D3160ADE2D707EA60038F3EA /* GoogleSignIn */,
+				D3160AE02D707EA60038F3EA /* GoogleSignInSwift */,
 			);
 			productName = Barbeloni;
 			productReference = D3E36CB72D6F088E006A5D1B /* Barbeloni.app */;
 			productType = "com.apple.product-type.application";
-		};
-		D3E36CC72D6F088F006A5D1B /* BarbeloniTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D3E36CDF2D6F088F006A5D1B /* Build configuration list for PBXNativeTarget "BarbeloniTests" */;
-			buildPhases = (
-				D3E36CC42D6F088F006A5D1B /* Sources */,
-				D3E36CC52D6F088F006A5D1B /* Frameworks */,
-				D3E36CC62D6F088F006A5D1B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D3E36CCA2D6F088F006A5D1B /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D3E36CCB2D6F088F006A5D1B /* BarbeloniTests */,
-			);
-			name = BarbeloniTests;
-			packageProductDependencies = (
-			);
-			productName = BarbeloniTests;
-			productReference = D3E36CC82D6F088F006A5D1B /* BarbeloniTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		D3E36CD12D6F088F006A5D1B /* BarbeloniUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = D3E36CE22D6F088F006A5D1B /* Build configuration list for PBXNativeTarget "BarbeloniUITests" */;
-			buildPhases = (
-				D3E36CCE2D6F088F006A5D1B /* Sources */,
-				D3E36CCF2D6F088F006A5D1B /* Frameworks */,
-				D3E36CD02D6F088F006A5D1B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				D3E36CD42D6F088F006A5D1B /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				D3E36CD52D6F088F006A5D1B /* BarbeloniUITests */,
-			);
-			name = BarbeloniUITests;
-			packageProductDependencies = (
-			);
-			productName = BarbeloniUITests;
-			productReference = D3E36CD22D6F088F006A5D1B /* BarbeloniUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -176,14 +114,6 @@
 					D3E36CB62D6F088E006A5D1B = {
 						CreatedOnToolsVersion = 16.2;
 					};
-					D3E36CC72D6F088F006A5D1B = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = D3E36CB62D6F088E006A5D1B;
-					};
-					D3E36CD12D6F088F006A5D1B = {
-						CreatedOnToolsVersion = 16.2;
-						TestTargetID = D3E36CB62D6F088E006A5D1B;
-					};
 				};
 			};
 			buildConfigurationList = D3E36CB22D6F088D006A5D1B /* Build configuration list for PBXProject "Barbeloni" */;
@@ -195,34 +125,22 @@
 			);
 			mainGroup = D3E36CAE2D6F088D006A5D1B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3E36CB82D6F088E006A5D1B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				D3E36CB62D6F088E006A5D1B /* Barbeloni */,
-				D3E36CC72D6F088F006A5D1B /* BarbeloniTests */,
-				D3E36CD12D6F088F006A5D1B /* BarbeloniUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D3E36CB52D6F088E006A5D1B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3E36CC62D6F088F006A5D1B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3E36CD02D6F088F006A5D1B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,34 +157,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D3E36CC42D6F088F006A5D1B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		D3E36CCE2D6F088F006A5D1B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		D3E36CCA2D6F088F006A5D1B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D3E36CB62D6F088E006A5D1B /* Barbeloni */;
-			targetProxy = D3E36CC92D6F088F006A5D1B /* PBXContainerItemProxy */;
-		};
-		D3E36CD42D6F088F006A5D1B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = D3E36CB62D6F088E006A5D1B /* Barbeloni */;
-			targetProxy = D3E36CD32D6F088F006A5D1B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D3E36CDA2D6F088F006A5D1B /* Debug */ = {
@@ -397,7 +288,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "$(PRODUCT_NAME) uses bluetooth";
+				INFOPLIST_FILE = Barbeloni/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Barbeloni uses bluetooth";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -416,10 +309,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Alberto.Barbeloni;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Debug;
@@ -438,7 +332,9 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "$(PRODUCT_NAME) uses bluetooth";
+				INFOPLIST_FILE = Barbeloni/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Barbeloni uses bluetooth";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -457,100 +353,11 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Alberto.Barbeloni;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 2.2;
-			};
-			name = Release;
-		};
-		D3E36CE02D6F088F006A5D1B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JJ2DV9B3QT;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Alberto.BarbeloniTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Barbeloni.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Barbeloni";
-				XROS_DEPLOYMENT_TARGET = 2.2;
-			};
-			name = Debug;
-		};
-		D3E36CE12D6F088F006A5D1B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JJ2DV9B3QT;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Alberto.BarbeloniTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Barbeloni.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Barbeloni";
-				XROS_DEPLOYMENT_TARGET = 2.2;
-			};
-			name = Release;
-		};
-		D3E36CE32D6F088F006A5D1B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JJ2DV9B3QT;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Alberto.BarbeloniUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Barbeloni;
-				XROS_DEPLOYMENT_TARGET = 2.2;
-			};
-			name = Debug;
-		};
-		D3E36CE42D6F088F006A5D1B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JJ2DV9B3QT;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = Alberto.BarbeloniUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = auto;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_TARGET_NAME = Barbeloni;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				XROS_DEPLOYMENT_TARGET = 2.2;
 			};
 			name = Release;
@@ -576,25 +383,54 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D3E36CDF2D6F088F006A5D1B /* Build configuration list for PBXNativeTarget "BarbeloniTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D3E36CE02D6F088F006A5D1B /* Debug */,
-				D3E36CE12D6F088F006A5D1B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		D3E36CE22D6F088F006A5D1B /* Build configuration list for PBXNativeTarget "BarbeloniUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				D3E36CE32D6F088F006A5D1B /* Debug */,
-				D3E36CE42D6F088F006A5D1B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
+		D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.9.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D3160ADE2D707EA60038F3EA /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		D3160AE02D707EA60038F3EA /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+		D3E36D032D702D44006A5D1B /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		D3E36D052D702D44006A5D1B /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		D3E36D072D702D44006A5D1B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D3E36CAF2D6F088D006A5D1B /* Project object */;
 }

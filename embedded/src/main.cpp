@@ -6,9 +6,7 @@
 
 #define DEVICE_NAME "Barbeloni"
 #define SERVICE_UUID "832546eb-9a15-42e8-b250-7d2b66aa9ad5"
-#define VELOCITY_CHAR_UUID "bf6af529-becb-4509-8258-b144d38c6715"
-#define POWER_CHAR_UUID "7e2421b5-09b6-4e66-acc3-1982f6092a91"
-#define WORK_CHAR_UUID "49519866-e762-4dfb-8223-7c7d060f3619"
+#define DATA_CHAR_UUID "bf6af529-becb-4509-8258-b144d38c6715"
 
 // Sampling rate period in milliseconds
 const float BNO085_SAMPLERATE_PERIOD_MS = 10.0;
@@ -23,22 +21,20 @@ Adafruit_BNO08x bno(BNO08X_RESET);
 // Variables for storing tilt-corrected acceleration and velocity
 float avgacc[3] = {0, 0, 0};
 float vel[3] = {0, 0, 0};
-float pos[3] = {0, 0, 0};
-float force[3] = {0, 0, 0};
-float power[3] = {0, 0, 0};
-float totalPower = 0.0;
-float totalWork = 0.0;
 
-const float avgrate = 0.0001;  // Slowly compute average acceleration
-const float leakage = 0.004;   // Adjust leakage as needed
-const float gravity = 9.80665; // Gravity in m/s^2
-const float mass = 20.0;       // Mass in kg
+struct TimepointData
+{
+  float velocity[3];
+  float acceleration[3];
+  unsigned long timestamp;
+};
+
+const float avgrate = 0.0001; // Slowly compute average acceleration
+const float leakage = 0.004;  // Adjust leakage as needed
 
 NimBLEServer *pServer = NULL;
-NimBLECharacteristic *pVelocityCharacteristic = NULL;
-NimBLECharacteristic *pPowerCharacteristic = NULL;
-NimBLECharacteristic *pWorkCharacteristic = NULL;
-bool deviceConnected = false;
+NimBLECharacteristic *pDataCharacteristic = NULL;
+volatile bool deviceConnected = false;
 
 class MyServerCallbacks : public NimBLEServerCallbacks
 {
@@ -53,7 +49,6 @@ class MyServerCallbacks : public NimBLEServerCallbacks
   {
     deviceConnected = false;
     Serial.println("Client disconnected");
-    // pServer->startAdvertising();
     NimBLEDevice::startAdvertising();
     Serial.println("Advertising restarted");
   }
@@ -69,24 +64,10 @@ bool startBluetooth()
   NimBLEService *pService = pServer->createService(SERVICE_UUID);
 
   // Create characteristics
-  pVelocityCharacteristic = pService->createCharacteristic(
-      VELOCITY_CHAR_UUID,
+  pDataCharacteristic = pService->createCharacteristic(
+      DATA_CHAR_UUID,
       NIMBLE_PROPERTY::READ |
           NIMBLE_PROPERTY::NOTIFY);
-
-  pPowerCharacteristic = pService->createCharacteristic(
-      POWER_CHAR_UUID,
-      NIMBLE_PROPERTY::READ |
-          NIMBLE_PROPERTY::NOTIFY);
-
-  pWorkCharacteristic = pService->createCharacteristic(
-      WORK_CHAR_UUID,
-      NIMBLE_PROPERTY::READ |
-          NIMBLE_PROPERTY::NOTIFY);
-
-  pVelocityCharacteristic->setValue((uint8_t *)vel, sizeof(vel));
-  pPowerCharacteristic->setValue((uint8_t *)&totalPower, sizeof(totalPower));
-  pWorkCharacteristic->setValue((uint8_t *)&totalWork, sizeof(totalWork));
 
   // Start the service
   pService->start();
@@ -197,21 +178,16 @@ void loop()
     {
       avgacc[n] = avgrate * acc[n] + (1 - avgrate) * avgacc[n];
       vel[n] += BNO085_SAMPLERATE_PERIOD_MS / 1000.0 * (acc[n] - avgacc[n]) - leakage * vel[n];
-      force[n] = mass * acc[n];
-      power[n] = force[n] * vel[n];
     }
-    totalPower = power[0] + power[1] + power[2];
-    totalWork += totalPower * BNO085_SAMPLERATE_PERIOD_MS / 1000.0;
+
+    TimepointData dataToSend;
+    memcpy(dataToSend.velocity, vel, sizeof(vel));     // Copy velocity
+    memcpy(dataToSend.acceleration, acc, sizeof(acc)); // Copy acceleration
+    dataToSend.timestamp = millis();                   // Capture the timestamp
 
     // Set the characteristic values (convert float to byte array)
-    pVelocityCharacteristic->setValue((uint8_t *)vel, sizeof(vel));
-    pPowerCharacteristic->setValue((uint8_t *)&totalPower, sizeof(totalPower));
-    pWorkCharacteristic->setValue((uint8_t *)&totalWork, sizeof(totalWork));
-
-    // Notify
-    pVelocityCharacteristic->notify();
-    pPowerCharacteristic->notify();
-    pWorkCharacteristic->notify();
+    pDataCharacteristic->setValue((uint8_t *)&dataToSend, sizeof(dataToSend));
+    pDataCharacteristic->notify();
 
     newQuatData = false;
     newAccelData = false;
