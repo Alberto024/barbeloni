@@ -7,7 +7,8 @@ struct AuthenticationView: View {
 
     // Dependency injection for the view model
     init(authService: AuthenticationService) {
-        _viewModel = StateObject(wrappedValue: AuthenticationViewModel(authService: authService))
+        _viewModel = StateObject(
+            wrappedValue: AuthenticationViewModel(authService: authService))
     }
 
     enum AuthMode {
@@ -57,10 +58,12 @@ struct AuthenticationView: View {
 
                 // Confirm password field (sign up only)
                 if authMode == .signUp {
-                    SecureField("Confirm Password", text: $viewModel.confirmPassword)
-                        .padding()
-                        .background(Color.gray.opacity(0.2))
-                        .cornerRadius(8)
+                    SecureField(
+                        "Confirm Password", text: $viewModel.confirmPassword
+                    )
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(8)
 
                     // Display name field (sign up only)
                     TextField("Display Name", text: $viewModel.displayName)
@@ -93,13 +96,16 @@ struct AuthenticationView: View {
                 }
                 .background(
                     authMode == .signIn
-                        ? (viewModel.isSignInFormValid ? Color.blue : Color.gray)
-                        : (viewModel.isSignUpFormValid ? Color.blue : Color.gray)
+                        ? (viewModel.isSignInFormValid
+                            ? Color.blue : Color.gray)
+                        : (viewModel.isSignUpFormValid
+                            ? Color.blue : Color.gray)
                 )
                 .cornerRadius(8)
                 .disabled(
                     authMode == .signIn
-                        ? !viewModel.isSignInFormValid : !viewModel.isSignUpFormValid
+                        ? !viewModel.isSignInFormValid
+                        : !viewModel.isSignUpFormValid
                 )
                 .disabled(viewModel.isLoading)
 
@@ -110,7 +116,8 @@ struct AuthenticationView: View {
                 }) {
                     Text(
                         authMode == .signIn
-                            ? "Need an account? Sign Up" : "Already have an account? Sign In"
+                            ? "Need an account? Sign Up"
+                            : "Already have an account? Sign In"
                     )
                     .foregroundColor(.blue)
                 }

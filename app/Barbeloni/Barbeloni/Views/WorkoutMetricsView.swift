@@ -5,16 +5,17 @@
 //  Created by Alberto Nava on 2/28/25.
 //
 
-
-import SwiftUI
 import Charts
+import SwiftUI
 
 struct WorkoutMetricsView: View {
     @ObservedObject var sessionManager: WorkoutSessionManager
-    
+
     var body: some View {
         VStack(spacing: 8) {
-            if case .setActive(_, _, let exerciseType, let weight) = sessionManager.currentState {
+            if case .setActive(_, _, let exerciseType, let weight) =
+                sessionManager.currentState
+            {
                 HStack {
                     VStack(alignment: .leading) {
                         Text("Current Exercise")
@@ -23,9 +24,9 @@ struct WorkoutMetricsView: View {
                         Text(exerciseType)
                             .font(.headline)
                     }
-                    
+
                     Spacer()
-                    
+
                     VStack(alignment: .trailing) {
                         Text("Weight")
                             .font(.caption)
@@ -34,10 +35,10 @@ struct WorkoutMetricsView: View {
                             .font(.headline)
                     }
                 }
-                
+
                 if sessionManager.isRecording {
                     Divider()
-                    
+
                     HStack {
                         VStack(alignment: .leading) {
                             Text("Data Points")
@@ -46,9 +47,9 @@ struct WorkoutMetricsView: View {
                             Text("\(sessionManager.currentSetData.count)")
                                 .font(.headline)
                         }
-                        
+
                         Spacer()
-                        
+
                         VStack(alignment: .trailing) {
                             Text("Reps Detected")
                                 .font(.caption)

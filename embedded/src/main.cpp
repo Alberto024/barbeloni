@@ -26,11 +26,13 @@ struct TimepointData
 {
   float velocity[3];
   float acceleration[3];
-  unsigned long timestamp;
+  uint32_t timestamp;
 };
 
 const float avgrate = 0.0001; // Slowly compute average acceleration
 const float leakage = 0.004;  // Adjust leakage as needed
+
+uint32_t lastLogTime = 0;
 
 NimBLEServer *pServer = NULL;
 NimBLECharacteristic *pDataCharacteristic = NULL;
@@ -188,6 +190,31 @@ void loop()
     // Set the characteristic values (convert float to byte array)
     pDataCharacteristic->setValue((uint8_t *)&dataToSend, sizeof(dataToSend));
     pDataCharacteristic->notify();
+
+    // Every 5 seconds log data to serial
+    if (millis() - lastLogTime > 5000)
+    {
+      lastLogTime = millis();
+      Serial.println("Sizeof dataToSend: ");
+      Serial.println(sizeof(dataToSend));
+      Serial.println("Data that is being sent: ");
+      Serial.println(&dataToSend);
+      Serial.print("Timestamp: ");
+      Serial.print(dataToSend.timestamp);
+      Serial.print(", Velocity: ");
+      Serial.print(dataToSend.velocity[0]);
+      Serial.print(", ");
+      Serial.print(dataToSend.velocity[1]);
+      Serial.print(", ");
+      Serial.print(dataToSend.velocity[2]);
+      Serial.print(" m/s, Acceleration: ");
+      Serial.print(dataToSend.acceleration[0]);
+      Serial.print(", ");
+      Serial.print(dataToSend.acceleration[1]);
+      Serial.print(", ");
+      Serial.print(dataToSend.acceleration[2]);
+      Serial.println(" m/s^2");
+    }
 
     newQuatData = false;
     newAccelData = false;

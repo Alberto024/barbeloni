@@ -20,7 +20,7 @@ struct User: Identifiable, Codable {
     var lastLoginAt: Date
 
     // Add any additional user properties you need
-    
+
     var height: Float?
     var weight: Float?
     var birthDate: Date?
@@ -48,7 +48,8 @@ extension User {
         let now = Date()
         return User(
             email: email,
-            displayName: name ?? email.components(separatedBy: "@").first ?? "User",
+            displayName: name ?? email.components(separatedBy: "@").first
+                ?? "User",
             createdAt: now,
             lastLoginAt: now
         )

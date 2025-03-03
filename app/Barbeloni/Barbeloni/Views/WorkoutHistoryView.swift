@@ -5,14 +5,13 @@
 //  Created by Alberto Nava on 3/1/25.
 //
 
-
-import SwiftUI
 import FirebaseAuth
+import SwiftUI
 
 struct WorkoutHistoryView: View {
     @ObservedObject var coordinator: AppCoordinator
     @StateObject private var viewModel = WorkoutViewModel()
-    
+
     var body: some View {
         NavigationStack {
             VStack {
@@ -21,16 +20,18 @@ struct WorkoutHistoryView: View {
                         Image(systemName: "dumbbell")
                             .font(.system(size: 60))
                             .foregroundColor(.secondary)
-                        
+
                         Text("No Workouts Yet")
                             .font(.title)
                             .fontWeight(.bold)
-                        
-                        Text("Start your first workout to begin tracking your progress.")
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal)
-                        
+
+                        Text(
+                            "Start your first workout to begin tracking your progress."
+                        )
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+
                         Button(action: {
                             coordinator.navigateTo(.activeWorkout)
                         }) {
@@ -49,11 +50,11 @@ struct WorkoutHistoryView: View {
                 } else {
                     List {
                         ForEach(viewModel.workouts) { workout in
-                            WorkoutRowView(workout: workout)
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    // Navigate to workout detail
-                                }
+                            NavigationLink(
+                                destination: WorkoutDetailView(workout: workout)
+                            ) {
+                                WorkoutRowView(workout: workout)
+                            }
                         }
                     }
                     .overlay {
@@ -63,21 +64,21 @@ struct WorkoutHistoryView: View {
                         }
                     }
                     #if os(iOS)
-                    .listStyle(.insetGrouped)
+                        .listStyle(.insetGrouped)
                     #endif
                 }
             }
             .navigationTitle("Workout History")
             .toolbar {
-                ToolbarItem() {
+                ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         coordinator.navigateTo(.activeWorkout)
                     }) {
                         Label("New Workout", systemImage: "plus")
                     }
                 }
-                
-                ToolbarItem() {
+
+                ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         coordinator.navigateTo(.settings)
                     }) {

@@ -5,26 +5,28 @@
 //  Created by Alberto Nava on 2/28/25.
 //
 
-
-import SwiftUI
 import Charts
+import SwiftUI
 
 struct StatusCardView: View {
     @ObservedObject var bluetoothManager: BluetoothManager
     @ObservedObject var sessionManager: WorkoutSessionManager
-    
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Image(systemName: bluetoothManager.isConnected ? "bluetooth.connected" : "bluetooth.slash")
-                    .font(.title2)
-                    .foregroundColor(bluetoothManager.isConnected ? .blue : .red)
-                
+                Image(
+                    systemName: bluetoothManager.isConnected
+                        ? "bluetooth.connected" : "bluetooth.slash"
+                )
+                .font(.title2)
+                .foregroundColor(bluetoothManager.isConnected ? .blue : .red)
+
                 Text(bluetoothManager.statusMessage)
                     .font(.headline)
-                
+
                 Spacer()
-                
+
                 if !bluetoothManager.isConnected {
                     Button(action: {
                         bluetoothManager.startScanning()
@@ -51,14 +53,18 @@ struct StatusCardView: View {
                     }
                 }
             }
-            
+
             if case .workoutActive = sessionManager.currentState {
                 Divider()
-                
+
                 HStack {
-                    Label("\(sessionManager.setCount) Sets", systemImage: "list.bullet")
+                    Label(
+                        "\(sessionManager.setCount) Sets",
+                        systemImage: "list.bullet")
                     Spacer()
-                    Label("\(sessionManager.repCount) Total Reps", systemImage: "figure.strengthtraining.traditional")
+                    Label(
+                        "\(sessionManager.repCount) Total Reps",
+                        systemImage: "figure.strengthtraining.traditional")
                 }
                 .font(.subheadline)
                 .foregroundColor(.secondary)

@@ -5,13 +5,12 @@
 //  Created by Alberto Nava on 3/1/25.
 //
 
-
-import SwiftUI
 import FirebaseAuth
+import SwiftUI
 
 struct MainCoordinatorView: View {
     @StateObject private var coordinator = AppCoordinator()
-    
+
     var body: some View {
         ZStack {
             switch coordinator.currentScreen {

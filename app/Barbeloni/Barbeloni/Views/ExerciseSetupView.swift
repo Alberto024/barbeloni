@@ -12,17 +12,17 @@ struct ExerciseSetupView: View {
     @Binding var weight: Float
     let exerciseTypes: [String]
     var onStartSet: () -> Void
-    
+
     var body: some View {
         VStack(spacing: 16) {
             Text("Set Up Your Exercise")
                 .font(.headline)
-            
+
             // Simple dropdown using Picker
             HStack {
                 Text("Exercise:")
                     .frame(width: 80, alignment: .leading)
-                
+
                 Picker("Select Exercise", selection: $exerciseType) {
                     Text("Select an exercise").tag("")
                     ForEach(exerciseTypes, id: \.self) { exercise in
@@ -31,12 +31,12 @@ struct ExerciseSetupView: View {
                 }
                 .frame(maxWidth: .infinity)
             }
-            
+
             // Weight input
             HStack {
                 Text("Weight:")
                     .frame(width: 80, alignment: .leading)
-                
+
                 HStack {
                     Button(action: {
                         weight = max(0, weight - 2.5)
@@ -44,17 +44,19 @@ struct ExerciseSetupView: View {
                         Image(systemName: "minus")
                     }
                     .buttonStyle(.bordered)
-                    
-                    TextField("Weight", value: $weight, formatter: NumberFormatter())
+
+                    TextField(
+                        "Weight", value: $weight, formatter: NumberFormatter()
+                    )
                     #if os(iOS)
                         .keyboardType(.decimalPad)
                     #endif
-                        .multilineTextAlignment(.center)
-                        .frame(width: 60)
-                    
+                    .multilineTextAlignment(.center)
+                    .frame(width: 60)
+
                     Text("kg")
                         .foregroundColor(.secondary)
-                    
+
                     Button(action: {
                         weight += 2.5
                     }) {
@@ -66,7 +68,7 @@ struct ExerciseSetupView: View {
                 .background(Color(.gray))
                 .cornerRadius(8)
             }
-            
+
             // Start set button
             Button(action: onStartSet) {
                 Text("Start Set")

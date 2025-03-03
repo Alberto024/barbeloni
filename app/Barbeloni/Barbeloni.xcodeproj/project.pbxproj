@@ -85,6 +85,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D35CAC542D74BBFB0012EFD7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				D3E36CB92D6F088E006A5D1B /* Barbeloni */,
@@ -128,6 +129,7 @@
 			packageReferences = (
 				D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				D35CAC522D74BA440012EFD7 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3E36CB82D6F088E006A5D1B /* Products */;
@@ -158,6 +160,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D35CAC542D74BBFB0012EFD7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = D35CAC532D74BBFB0012EFD7 /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		D3E36CDA2D6F088F006A5D1B /* Debug */ = {
@@ -394,6 +403,14 @@
 				minimumVersion = 8.0.0;
 			};
 		};
+		D35CAC522D74BA440012EFD7 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.58.2;
+			};
+		};
 		D3E36D022D702D44006A5D1B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -414,6 +431,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D3160ADD2D707EA60038F3EA /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
 			productName = GoogleSignInSwift;
+		};
+		D35CAC532D74BBFB0012EFD7 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = D35CAC522D74BA440012EFD7 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		D3E36D032D702D44006A5D1B /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

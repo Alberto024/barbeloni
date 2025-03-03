@@ -5,14 +5,15 @@
 //  Created by Alberto Nava on 2/28/25.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 enum WorkoutSessionState {
     case idle
     case workoutActive(workoutId: String)
-    case setActive(workoutId: String, setId: String, exerciseType: String, weight: Float)
+    case setActive(
+        workoutId: String, setId: String, exerciseType: String, weight: Float)
 }
 
 class WorkoutSessionManager: ObservableObject {
@@ -21,39 +22,39 @@ class WorkoutSessionManager: ObservableObject {
     @Published var isRecording = false
     @Published var currentSetData: [SensorTimepoint] = []
     @Published var errorMessage: String?
-    
+
     // Set metadata
     @Published var exerciseType: String = ""
     @Published var weight: Float = 0
-    
+
     // Workout statistics
     @Published var setCount: Int = 0
     @Published var repCount: Int = 0
-    
+
     // Services
     private let workoutDataService = WorkoutDataService()
     private let bluetoothManager: BluetoothManager
-    
+
     // Subscriptions
     private var cancellables = Set<AnyCancellable>()
-    
+
     // Timestamps
     private var setStartTime: Date?
     private var lastRepEndTime: Date?
-    
+
     // For rep detection algorithm
     private var isInRep = false
     private var repStartIndex = 0
     private var velocityThreshold: Float = 0.1  // m/s - minimum velocity to consider a rep started
     private var accelerationThreshold: Float = 0.5  // m/s² - minimum acceleration to consider a rep started
-    
+
     // Current workout and set IDs
     private var currentWorkoutId: String?
     private var currentSetId: String?
-    
+
     init(bluetoothManager: BluetoothManager) {
         self.bluetoothManager = bluetoothManager
-        
+
         // Subscribe to sensor data updates
         bluetoothManager.$sensorTimepoint
             .compactMap { $0 }  // Filter out nil values
@@ -61,7 +62,7 @@ class WorkoutSessionManager: ObservableObject {
                 self?.processSensorData(timepoint)
             }
             .store(in: &cancellables)
-            
+
         // Subscribe to connection status
         bluetoothManager.$isConnected
             .sink { [weak self] isConnected in
@@ -72,9 +73,16 @@ class WorkoutSessionManager: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
+    private func stopRecordingIfNeeded() {
+        if isRecording {
+            isRecording = false
+            isInRep = false
+        }
+    }
+
     // MARK: - Workout Management
-    
+
     /// Start a new workout session
     func startWorkout() async {
         guard bluetoothManager.isConnected else {
@@ -83,7 +91,7 @@ class WorkoutSessionManager: ObservableObject {
             }
             return
         }
-        
+
         do {
             let workoutId = try await workoutDataService.createWorkout()
             await MainActor.run {
@@ -94,11 +102,12 @@ class WorkoutSessionManager: ObservableObject {
             }
         } catch {
             await MainActor.run {
-                errorMessage = "Failed to start workout: \(error.localizedDescription)"
+                errorMessage =
+                    "Failed to start workout: \(error.localizedDescription)"
             }
         }
     }
-    
+
     /// End the current workout
     func endWorkout() async {
         guard case .workoutActive(let workoutId) = currentState else {
@@ -108,22 +117,24 @@ class WorkoutSessionManager: ObservableObject {
             }
             return
         }
-        
+
         do {
-            try await workoutDataService.updateWorkout(workoutId: workoutId, endTime: Date())
+            try await workoutDataService.updateWorkout(
+                workoutId: workoutId, endTime: Date())
             await MainActor.run {
                 currentWorkoutId = nil
                 currentState = .idle
             }
         } catch {
             await MainActor.run {
-                errorMessage = "Failed to end workout: \(error.localizedDescription)"
+                errorMessage =
+                    "Failed to end workout: \(error.localizedDescription)"
             }
         }
     }
-    
+
     // MARK: - Set Management
-    
+
     /// Start a new set with the given exercise type and weight
     func startSet(exerciseType: String, weight: Float) async {
         // Ensure we're in a workout
@@ -133,7 +144,7 @@ class WorkoutSessionManager: ObservableObject {
             }
             return
         }
-        
+
         // Ensure the device is connected
         guard bluetoothManager.isConnected else {
             await MainActor.run {
@@ -141,22 +152,25 @@ class WorkoutSessionManager: ObservableObject {
             }
             return
         }
-        
+
         do {
-            let setId = try await workoutDataService.addSet(to: workoutId, exerciseType: exerciseType, weight: weight)
-            
+            let setId = try await workoutDataService.addSet(
+                to: workoutId, exerciseType: exerciseType, weight: weight)
+
             await MainActor.run {
                 // Update state
                 currentSetId = setId
                 self.exerciseType = exerciseType
                 self.weight = weight
-                currentState = .setActive(workoutId: workoutId, setId: setId, exerciseType: exerciseType, weight: weight)
-                
+                currentState = .setActive(
+                    workoutId: workoutId, setId: setId,
+                    exerciseType: exerciseType, weight: weight)
+
                 // Reset data collection
                 currentSetData = []
                 repCount = 0
                 isInRep = false
-                
+
                 // Start recording
                 isRecording = true
                 setStartTime = Date()
@@ -165,30 +179,58 @@ class WorkoutSessionManager: ObservableObject {
             }
         } catch {
             await MainActor.run {
-                errorMessage = "Failed to start set: \(error.localizedDescription)"
+                errorMessage =
+                    "Failed to start set: \(error.localizedDescription)"
             }
         }
     }
-    
+
+    /// Process all the set data at the end of a set
+    private func processSetData() -> (
+        accelerationVectors: [[Float]], velocityVectors: [[Float]],
+        timestamps: [UInt32]
+    ) {
+        var accelerationVectors: [[Float]] = []
+        var velocityVectors: [[Float]] = []
+        var timestamps: [UInt32] = []
+
+        for timepoint in currentSetData {
+            // Convert tuples to arrays
+            velocityVectors.append([
+                timepoint.velocity.0, timepoint.velocity.1,
+                timepoint.velocity.2,
+            ])
+            accelerationVectors.append([
+                timepoint.acceleration.0, timepoint.acceleration.1,
+                timepoint.acceleration.2,
+            ])
+            timestamps.append(timepoint.timestamp)
+        }
+
+        return (accelerationVectors, velocityVectors, timestamps)
+    }
+
     /// End the current set and save data to Firestore
     func endSet() async {
         // Stop recording first
         await MainActor.run {
             stopRecordingIfNeeded()
         }
-        
+
         // Ensure we have an active set
         guard case .setActive(let workoutId, let setId, _, _) = currentState,
-              !currentSetData.isEmpty else {
+            !currentSetData.isEmpty
+        else {
             await MainActor.run {
                 currentState = .workoutActive(workoutId: currentWorkoutId ?? "")
             }
             return
         }
-        
+
         // Process the collected data
-        let (accelerationVectors, velocityVectors, timestamps) = processSetData()
-        
+        let (accelerationVectors, velocityVectors, timestamps) =
+            processSetData()
+
         do {
             // Update the set data in Firestore
             try await workoutDataService.updateSetData(
@@ -199,7 +241,7 @@ class WorkoutSessionManager: ObservableObject {
                 rawVelocityVectors: velocityVectors,
                 rawTimestamps: timestamps
             )
-            
+
             await MainActor.run {
                 currentSetId = nil
                 currentState = .workoutActive(workoutId: workoutId)
@@ -207,36 +249,45 @@ class WorkoutSessionManager: ObservableObject {
             }
         } catch {
             await MainActor.run {
-                errorMessage = "Failed to save set data: \(error.localizedDescription)"
+                errorMessage =
+                    "Failed to save set data: \(error.localizedDescription)"
             }
         }
     }
-    
+
     // MARK: - Data Processing
-    
+
     /// Process incoming sensor data
     private func processSensorData(_ timepoint: SensorTimepoint) {
         guard isRecording else { return }
-        
+
         // Add data point to our collection
         currentSetData.append(timepoint)
-        
+
         // Detect reps in real-time
         detectRep(at: currentSetData.count - 1)
     }
-    
+
     /// Detect if a rep has occurred
     private func detectRep(at index: Int) {
         guard currentSetData.count > index else { return }
-        
+
         let timepoint = currentSetData[index]
-        
+
         // Calculate magnitude of velocity vector
-        let velocityMagnitude = calculateMagnitude(timepoint.velocity)
-        let accelerationMagnitude = calculateMagnitude(timepoint.acceleration)
-        
+        // Access tuple values directly instead of array
+        let velocityMagnitude = calculateMagnitude(
+            (timepoint.velocity.0, timepoint.velocity.1, timepoint.velocity.2))
+        let accelerationMagnitude = calculateMagnitude(
+            (
+                timepoint.acceleration.0, timepoint.acceleration.1,
+                timepoint.acceleration.2
+            ))
+
         // Simple rep detection: Look for movement starting (crossing threshold)
-        if !isInRep && velocityMagnitude > velocityThreshold && accelerationMagnitude > accelerationThreshold {
+        if !isInRep && velocityMagnitude > velocityThreshold
+            && accelerationMagnitude > accelerationThreshold
+        {
             // Start of a rep
             isInRep = true
             repStartIndex = index
@@ -245,14 +296,14 @@ class WorkoutSessionManager: ObservableObject {
         else if isInRep && velocityMagnitude < velocityThreshold {
             // End of a rep
             isInRep = false
-            
+
             // Ensure the rep lasted long enough to be counted (not just noise)
-            if index - repStartIndex > 5 { // Arbitrary minimum number of data points
+            if index - repStartIndex > 5 {  // Arbitrary minimum number of data points
                 processCompletedRep(startIndex: repStartIndex, endIndex: index)
             }
         }
     }
-    
+
     /// Process a completed rep and save to Firestore
     private func processCompletedRep(startIndex: Int, endIndex: Int) {
         // Calculate peak metrics for this rep
@@ -260,30 +311,47 @@ class WorkoutSessionManager: ObservableObject {
         var peakAcceleration: [Float] = [0, 0, 0]
         var peakVelocityMagnitude: Float = 0
         var peakAccelerationMagnitude: Float = 0
-        
-        for i in startIndex...endIndex {
-            let timepoint = currentSetData[i]
-            
-            let velocityMag = calculateMagnitude(timepoint.velocity)
+
+        for index in startIndex...endIndex {
+            let timepoint = currentSetData[index]
+
+            // Convert tuple to array for consistent processing
+            let velocityArray = [
+                timepoint.velocity.0, timepoint.velocity.1,
+                timepoint.velocity.2,
+            ]
+            let velocityMag = calculateMagnitude(
+                (
+                    timepoint.velocity.0, timepoint.velocity.1,
+                    timepoint.velocity.2
+                ))
             if velocityMag > peakVelocityMagnitude {
                 peakVelocityMagnitude = velocityMag
-                peakVelocity = timepoint.velocity
+                peakVelocity = velocityArray
             }
-            
-            let accelMag = calculateMagnitude(timepoint.acceleration)
+
+            let accelArray = [
+                timepoint.acceleration.0, timepoint.acceleration.1,
+                timepoint.acceleration.2,
+            ]
+            let accelMag = calculateMagnitude(
+                (
+                    timepoint.acceleration.0, timepoint.acceleration.1,
+                    timepoint.acceleration.2
+                ))
             if accelMag > peakAccelerationMagnitude {
                 peakAccelerationMagnitude = accelMag
-                peakAcceleration = timepoint.acceleration
+                peakAcceleration = accelArray
             }
         }
-        
+
         // Calculate force and power (simplified)
         // Force = mass × acceleration
         let peakForce = weight * peakAccelerationMagnitude
-        
+
         // Power = force × velocity
         let peakPower = peakForce * peakVelocityMagnitude
-        
+
         // Save rep data to Firestore asynchronously
         Task {
             if case .setActive(let workoutId, let setId, _, _) = currentState {
@@ -296,7 +364,7 @@ class WorkoutSessionManager: ObservableObject {
                         peakForce: peakForce,
                         peakPower: peakPower
                     )
-                    
+
                     await MainActor.run {
                         repCount += 1
                         lastRepEndTime = Date()
@@ -307,35 +375,20 @@ class WorkoutSessionManager: ObservableObject {
             }
         }
     }
-    
-    /// Process all the set data at the end of a set
-    private func processSetData() -> (accelerationVectors: [[Float]], velocityVectors: [[Float]], timestamps: [UInt32]) {
-        var accelerationVectors: [[Float]] = []
-        var velocityVectors: [[Float]] = []
-        var timestamps: [UInt32] = []
-        
-        for timepoint in currentSetData {
-            accelerationVectors.append(timepoint.acceleration)
-            velocityVectors.append(timepoint.velocity)
-            timestamps.append(timepoint.timestamp)
-        }
-        
-        return (accelerationVectors, velocityVectors, timestamps)
-    }
-    
+
     // MARK: - Helper Methods
-    
-    /// Stop recording if currently recording
-    private func stopRecordingIfNeeded() {
-        if isRecording {
-            isRecording = false
-            isInRep = false
-        }
+
+    // Update the magnitude calculation to work with tuples
+    private func calculateMagnitude(_ vector: (Float, Float, Float)) -> Float {
+        return sqrt(
+            vector.0 * vector.0 + vector.1 * vector.1 + vector.2 * vector.2)
     }
-    
-    /// Calculate the magnitude of a vector
+
+    // Keep the original vector array version for compatibility
     private func calculateMagnitude(_ vector: [Float]) -> Float {
         guard vector.count >= 3 else { return 0 }
-        return sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
+        return sqrt(
+            vector[0] * vector[0] + vector[1] * vector[1] + vector[2]
+                * vector[2])
     }
 }

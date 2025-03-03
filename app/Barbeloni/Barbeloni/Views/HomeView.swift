@@ -17,7 +17,9 @@ struct HomeView: View {
                     .font(.title)
                     .fontWeight(.bold)
 
-                Text("You are signed in with: \(authService.user?.email ?? "Unknown email")")
+                Text(
+                    "You are signed in with: \(authService.user?.email ?? "Unknown email")"
+                )
 
                 Spacer()
 

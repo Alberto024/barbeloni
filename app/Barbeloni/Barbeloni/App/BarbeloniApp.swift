@@ -5,18 +5,18 @@
 //  Created by Alberto Nava on 2/28/25.
 //
 
-import SwiftUI
 import Firebase
+import SwiftUI
 
 @main
 struct BarbeloniApp: App {
     init() {
         FirebaseApp.configure()
     }
-    
+
     var body: some Scene {
         WindowGroup {
-            MainCoordinatorView()
+            SimpleMainView()
         }
     }
 }

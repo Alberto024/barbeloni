@@ -5,14 +5,13 @@
 //  Created by Alberto Nava on 2/28/25.
 //
 
-
-import SwiftUI
 import Charts
+import SwiftUI
 
 struct WorkoutControlsView: View {
     @ObservedObject var sessionManager: WorkoutSessionManager
     @State private var showingConfirmation = false
-    
+
     var body: some View {
         VStack {
             if case .idle = sessionManager.currentState {
@@ -51,7 +50,9 @@ struct WorkoutControlsView: View {
                         }
                     }
                 } message: {
-                    Text("Are you sure you want to end this workout? This action cannot be undone.")
+                    Text(
+                        "Are you sure you want to end this workout? This action cannot be undone."
+                    )
                 }
             }
         }
