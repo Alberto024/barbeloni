@@ -1,16 +1,7 @@
-//
-//  UserData.swift
-//  Barbeloni
-//
-//  Created by Alberto Nava on 2/28/25.
-//
-
 import FirebaseFirestore
 import Foundation
 
-// This model represents a user in our application
 struct User: Identifiable, Codable {
-    // Use @DocumentID to map the Firestore document ID to the id property
     @DocumentID var id: String?
 
     let email: String
@@ -19,14 +10,13 @@ struct User: Identifiable, Codable {
     var createdAt: Date
     var lastLoginAt: Date
 
-    // Add any additional user properties you need
-
+    // Optional user profile data
     var height: Float?
     var weight: Float?
     var birthDate: Date?
     var gender: String?
 
-    // Custom coding keys if you want the field names in Firestore to be different
+    // Custom coding keys for Firestore field names
     enum CodingKeys: String, CodingKey {
         case id
         case email
@@ -41,9 +31,9 @@ struct User: Identifiable, Codable {
     }
 }
 
-// You can extend the User model with additional functionality if needed
+// Extension for utility methods
 extension User {
-    // Example: A static method to create a new user from Firebase Auth data
+    // Create a new user from authentication data
     static func createNew(email: String, name: String? = nil) -> User {
         let now = Date()
         return User(

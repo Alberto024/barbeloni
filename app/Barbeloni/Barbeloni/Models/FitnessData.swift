@@ -1,8 +1,3 @@
-//
-//  FitnessData.swift
-//  Barbeloni
-//
-
 import FirebaseFirestore
 import Foundation
 
@@ -35,7 +30,7 @@ struct SetData: Identifiable, Codable {
     var accelerationZ: [Float]
     var timestamps: [UInt32]
 
-    // Computed properties to convert to vector format when needed
+    // Convert to vector format when needed
     var rawVelocityVectors: [[Float]] {
         var vectors: [[Float]] = []
         for index
@@ -71,4 +66,22 @@ struct WorkoutData: Identifiable, Codable {
     var endTime: Date?
     var sets: [SetData] = []
     var notes: String?
+
+    // Computed properties for statistics
+    var totalReps: Int {
+        sets.reduce(0) { $0 + $1.reps.count }
+    }
+
+    var duration: TimeInterval? {
+        guard let endTime = endTime else { return nil }
+        return endTime.timeIntervalSince(startTime)
+    }
+
+    var formattedDuration: String {
+        guard let duration = duration else { return "In Progress" }
+
+        let minutes = Int(duration / 60)
+        let seconds = Int(duration.truncatingRemainder(dividingBy: 60))
+        return "\(minutes)m \(seconds)s"
+    }
 }

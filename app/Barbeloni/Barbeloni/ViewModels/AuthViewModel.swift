@@ -1,33 +1,26 @@
-//
-//  AuthViewModel.swift
-//  Barbeloni
-//
-//  Created by Alberto Nava on 2/28/25.
-//
-
 import Combine
 import Foundation
 
-// Authentication view model to handle UI state for login and signup
-class AuthenticationViewModel: ObservableObject {
-    // Published properties for UI binding
+class AuthViewModel: ObservableObject {
+    // Form fields
     @Published var email = ""
     @Published var password = ""
     @Published var confirmPassword = ""
     @Published var displayName = ""
 
+    // UI state
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var isAuthenticated = false
 
-    // Reference to the authentication service
+    // Service
     private let authService: AuthenticationService
     private var cancellables = Set<AnyCancellable>()
 
     init(authService: AuthenticationService) {
         self.authService = authService
 
-        // Listen for authentication state changes from the service
+        // Listen for auth state changes
         authService.authStateDidChange
             .receive(on: DispatchQueue.main)
             .sink { completion in
@@ -40,23 +33,20 @@ class AuthenticationViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    // MARK: - Form Validation
-
+    // Form validation
     var isSignInFormValid: Bool {
         !email.isEmpty && email.contains("@") && password.count >= 6
     }
 
     var isSignUpFormValid: Bool {
-        !email.isEmpty && email.contains("@") && password.count >= 6 && password == confirmPassword
-            && !displayName.isEmpty
+        !email.isEmpty && email.contains("@") && password.count >= 6
+            && password == confirmPassword && !displayName.isEmpty
     }
 
-    // MARK: - Authentication Methods
-
-    /// Sign in with email and password
+    // Authentication methods
     func signIn() async {
         guard isSignInFormValid else {
-            errorMessage = "Please enter a valid email and password (at least 6 characters)"
+            errorMessage = "Please enter a valid email and password"
             return
         }
 
@@ -76,7 +66,6 @@ class AuthenticationViewModel: ObservableObject {
         }
     }
 
-    /// Create a new account with email and password
     func signUp() async {
         guard isSignUpFormValid else {
             errorMessage = "Please check your form details"
@@ -86,7 +75,11 @@ class AuthenticationViewModel: ObservableObject {
         await MainActor.run { isLoading = true }
 
         do {
-            try await authService.signUp(email: email, password: password, displayName: displayName)
+            try await authService.signUp(
+                email: email,
+                password: password,
+                displayName: displayName
+            )
             await MainActor.run {
                 isLoading = false
                 errorMessage = nil
@@ -99,22 +92,6 @@ class AuthenticationViewModel: ObservableObject {
         }
     }
 
-    /// Sign out the current user
-    func signOut() {
-        do {
-            try authService.signOut()
-            // Reset form fields after signing out
-            email = ""
-            password = ""
-            confirmPassword = ""
-            displayName = ""
-            errorMessage = nil
-        } catch {
-            errorMessage = "Sign out failed: \(error.localizedDescription)"
-        }
-    }
-
-    /// Reset the form and error state
     func resetForm() {
         email = ""
         password = ""

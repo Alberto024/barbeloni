@@ -1,11 +1,3 @@
-//
-//  WorkoutViewModel.swift
-//  Barbeloni
-//
-//  Created by Alberto Nava on 2/28/25.
-//
-
-import Combine
 import Foundation
 
 class WorkoutViewModel: ObservableObject {
@@ -16,7 +8,7 @@ class WorkoutViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    // MARK: - Workouts
+    // MARK: - Workout Management
 
     /// Loads all workouts for the current user
     func loadWorkouts() async {
@@ -40,56 +32,50 @@ class WorkoutViewModel: ObservableObject {
         }
     }
 
-    /// Creates a new workout and makes it the current workout
-    func startNewWorkout(notes: String? = nil) async {
-        await MainActor.run { isLoading = true }
+    /// Loads a specific workout with all its details
+    func loadWorkoutDetails(workoutId: String) async {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
+        }
 
         do {
-            let workoutId = try await workoutService.createWorkout(notes: notes)
-            // Load the complete workout to get its ID
             let workout = try await workoutService.fetchCompleteWorkout(
                 workoutId: workoutId)
-
             await MainActor.run {
-                currentWorkout = workout
+                self.currentWorkout = workout
                 isLoading = false
             }
         } catch {
             await MainActor.run {
                 errorMessage =
-                    "Failed to start workout: \(error.localizedDescription)"
+                    "Failed to load workout details: \(error.localizedDescription)"
                 isLoading = false
             }
         }
     }
 
-    /// End the current workout
-    func endCurrentWorkout() async {
-        guard let workout = currentWorkout, let workoutId = workout.id else {
-            await MainActor.run {
-                errorMessage = "No active workout to end"
-            }
-            return
+    /// Deletes a workout
+    func deleteWorkout(workoutId: String) async -> Bool {
+        await MainActor.run {
+            isLoading = true
+            errorMessage = nil
         }
 
-        await MainActor.run { isLoading = true }
-
         do {
-            try await workoutService.updateWorkout(
-                workoutId: workoutId, endTime: Date())
-            // Refresh workouts list
-            await loadWorkouts()
-
+            try await workoutService.deleteWorkout(workoutId: workoutId)
+            await loadWorkouts()  // Refresh the list
             await MainActor.run {
-                currentWorkout = nil
                 isLoading = false
             }
+            return true
         } catch {
             await MainActor.run {
                 errorMessage =
-                    "Failed to end workout: \(error.localizedDescription)"
+                    "Failed to delete workout: \(error.localizedDescription)"
                 isLoading = false
             }
+            return false
         }
     }
 }

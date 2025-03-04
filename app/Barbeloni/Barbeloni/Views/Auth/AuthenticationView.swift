@@ -1,35 +1,28 @@
 import SwiftUI
 
-// Main authentication view that shows either sign in or sign up
 struct AuthenticationView: View {
-    @StateObject private var viewModel: AuthenticationViewModel
-    @State private var authMode: AuthMode = .signIn
+    @StateObject private var viewModel: AuthViewModel
+    @State private var isSignUp = false
 
-    // Dependency injection for the view model
     init(authService: AuthenticationService) {
         _viewModel = StateObject(
-            wrappedValue: AuthenticationViewModel(authService: authService))
-    }
-
-    enum AuthMode {
-        case signIn
-        case signUp
+            wrappedValue: AuthViewModel(authService: authService))
     }
 
     var body: some View {
         VStack(spacing: 20) {
-            // App logo or header
-            Image(systemName: "person.circle.fill")
+            // App logo
+            Image(systemName: "figure.strengthtraining.traditional")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 100, height: 100)
                 .foregroundColor(.blue)
 
-            Text(authMode == .signIn ? "Sign In" : "Create Account")
+            Text(isSignUp ? "Create Account" : "Sign In")
                 .font(.largeTitle)
                 .fontWeight(.bold)
 
-            // Display error message if any
+            // Show error message if any
             if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .foregroundColor(.red)
@@ -39,7 +32,6 @@ struct AuthenticationView: View {
 
             // Auth form
             VStack(spacing: 15) {
-                // Email field
                 TextField("Email", text: $viewModel.email)
                     .textContentType(.emailAddress)
                     .autocorrectionDisabled()
@@ -50,14 +42,12 @@ struct AuthenticationView: View {
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(8)
 
-                // Password field
                 SecureField("Password", text: $viewModel.password)
                     .padding()
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(8)
 
-                // Confirm password field (sign up only)
-                if authMode == .signUp {
+                if isSignUp {
                     SecureField(
                         "Confirm Password", text: $viewModel.confirmPassword
                     )
@@ -65,7 +55,6 @@ struct AuthenticationView: View {
                     .background(Color.gray.opacity(0.2))
                     .cornerRadius(8)
 
-                    // Display name field (sign up only)
                     TextField("Display Name", text: $viewModel.displayName)
                         .padding()
                         .background(Color.gray.opacity(0.2))
@@ -75,10 +64,10 @@ struct AuthenticationView: View {
                 // Sign in/up button
                 Button(action: {
                     Task {
-                        if authMode == .signIn {
-                            await viewModel.signIn()
-                        } else {
+                        if isSignUp {
                             await viewModel.signUp()
+                        } else {
+                            await viewModel.signIn()
                         }
                     }
                 }) {
@@ -87,7 +76,7 @@ struct AuthenticationView: View {
                             .progressViewStyle(CircularProgressViewStyle())
                             .padding(.vertical, 10)
                     } else {
-                        Text(authMode == .signIn ? "Sign In" : "Sign Up")
+                        Text(isSignUp ? "Sign Up" : "Sign In")
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -95,29 +84,29 @@ struct AuthenticationView: View {
                     }
                 }
                 .background(
-                    authMode == .signIn
-                        ? (viewModel.isSignInFormValid
+                    isSignUp
+                        ? (viewModel.isSignUpFormValid
                             ? Color.blue : Color.gray)
-                        : (viewModel.isSignUpFormValid
+                        : (viewModel.isSignInFormValid
                             ? Color.blue : Color.gray)
                 )
                 .cornerRadius(8)
                 .disabled(
-                    authMode == .signIn
-                        ? !viewModel.isSignInFormValid
-                        : !viewModel.isSignUpFormValid
+                    isSignUp
+                        ? !viewModel.isSignUpFormValid
+                        : !viewModel.isSignInFormValid
                 )
                 .disabled(viewModel.isLoading)
 
                 // Toggle between sign in and sign up
                 Button(action: {
                     viewModel.resetForm()
-                    authMode = authMode == .signIn ? .signUp : .signIn
+                    isSignUp.toggle()
                 }) {
                     Text(
-                        authMode == .signIn
-                            ? "Need an account? Sign Up"
-                            : "Already have an account? Sign In"
+                        isSignUp
+                            ? "Already have an account? Sign In"
+                            : "Need an account? Sign Up"
                     )
                     .foregroundColor(.blue)
                 }
@@ -127,13 +116,5 @@ struct AuthenticationView: View {
         }
         .padding()
         .frame(maxWidth: 400)
-    }
-}
-
-// Preview for development
-struct AuthenticationView_Previews: PreviewProvider {
-    static var previews: some View {
-        let authService = AuthenticationService()
-        AuthenticationView(authService: authService)
     }
 }

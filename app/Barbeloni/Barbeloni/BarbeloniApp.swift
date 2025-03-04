@@ -16,7 +16,7 @@ struct BarbeloniApp: App {
 
     var body: some Scene {
         WindowGroup {
-            SimpleMainView()
+            ContentView()
         }
     }
 }

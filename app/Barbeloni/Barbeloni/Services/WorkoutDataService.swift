@@ -1,35 +1,35 @@
-//
-//  WorkoutDataService.swift
-//  Barbeloni
-//
-//  Created by Alberto Nava on 2/28/25.
-//
-
 import FirebaseAuth
 import FirebaseFirestore
 import Foundation
 
-class WorkoutDataService: ObservableObject {
+// Custom error types for the service
+enum WorkoutServiceError: Error {
+    case userNotAuthenticated
+    case documentNotFound
+    case failedToSaveDocument
+    case failedToFetchDocuments
+}
+
+class WorkoutDataService {
     private let firestore = Firestore.firestore()
+
     private var userId: String? {
         Auth.auth().currentUser?.uid
     }
 
-    // MARK: - Creating Data
+    // MARK: - Create Operations
 
     /// Creates a new workout for the current user
     func createWorkout(startTime: Date = Date(), notes: String? = nil)
         async throws -> String
     {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         // Create a new workout document
         let workoutRef = firestore.collection("users").document(userId)
-            .collection(
-                "workouts"
-            ).document()
+            .collection("workouts").document()
 
         let workout = WorkoutData(
             id: workoutRef.documentID,
@@ -49,10 +49,10 @@ class WorkoutDataService: ObservableObject {
         async throws -> String
     {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
-        // Create a new set document in the workout's sets subcollection
+        // Create a new set document
         let setRef = firestore.collection("users").document(userId)
             .collection("workouts").document(workoutId)
             .collection("sets").document()
@@ -65,7 +65,6 @@ class WorkoutDataService: ObservableObject {
             endTime: now,
             exerciseType: exerciseType,
             weight: weight,
-            reps: [],
             velocityX: [],
             velocityY: [],
             velocityZ: [],
@@ -79,7 +78,42 @@ class WorkoutDataService: ObservableObject {
         return setRef.documentID
     }
 
-    /// Update a set with raw sensor data
+    /// Add a rep to a set
+    func addRep(
+        to setId: String,
+        workoutId: String,
+        peakAcceleration: [Float],
+        peakVelocity: [Float],
+        peakForce: Float,
+        peakPower: Float
+    ) async throws -> String {
+        guard let userId = userId else {
+            throw WorkoutServiceError.userNotAuthenticated
+        }
+
+        // Create a new rep document
+        let repRef = firestore.collection("users").document(userId)
+            .collection("workouts").document(workoutId)
+            .collection("sets").document(setId)
+            .collection("reps").document()
+
+        let now = Date()
+        let newRep = RepData(
+            id: repRef.documentID,
+            userId: userId,
+            startTime: now,
+            endTime: now,
+            peakAcceleration: peakAcceleration,
+            peakVelocity: peakVelocity,
+            peakForce: peakForce,
+            peakPower: peakPower
+        )
+
+        try repRef.setData(from: newRep)
+        return repRef.documentID
+    }
+
+    /// Update a set with sensor data
     func updateSetData(
         workoutId: String,
         setId: String,
@@ -89,7 +123,7 @@ class WorkoutDataService: ObservableObject {
         rawTimestamps: [UInt32]
     ) async throws {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         let setRef = firestore.collection("users").document(userId)
@@ -121,9 +155,9 @@ class WorkoutDataService: ObservableObject {
             }
         }
 
-        // Update the set with the simplified data structure
         let updateData: [String: Any] = [
             "endTime": endTime,
+            // Add the actual data
             "velocityX": velocityX,
             "velocityY": velocityY,
             "velocityZ": velocityZ,
@@ -135,43 +169,13 @@ class WorkoutDataService: ObservableObject {
 
         try await setRef.updateData(updateData)
     }
-    /// Adds a rep to an existing set
-    func addRep(
-        to setId: String, workoutId: String, peakAcceleration: [Float],
-        peakVelocity: [Float], peakForce: Float, peakPower: Float
-    ) async throws -> String {
-        guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
-        }
 
-        // Create a new rep document in the set's reps subcollection
-        let repRef = firestore.collection("users").document(userId)
-            .collection("workouts").document(workoutId)
-            .collection("sets").document(setId)
-            .collection("reps").document()
-
-        let now = Date()
-        let newRep = RepData(
-            id: repRef.documentID,
-            userId: userId,
-            startTime: now,
-            endTime: now,
-            peakAcceleration: peakAcceleration,
-            peakVelocity: peakVelocity,
-            peakForce: peakForce,
-            peakPower: peakPower
-        )
-
-        try repRef.setData(from: newRep)
-        return repRef.documentID
-    }
-
-    // MARK: - Reading Data
+    // MARK: - Read Operations
 
     /// Fetches all workouts for the current user
     func fetchWorkouts() async throws -> [WorkoutData] {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         let snapshot = try await firestore.collection("users").document(userId)
@@ -191,7 +195,7 @@ class WorkoutDataService: ObservableObject {
     /// Fetches a complete workout with all sets and reps
     func fetchCompleteWorkout(workoutId: String) async throws -> WorkoutData {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         // 1. Fetch the workout document
@@ -233,14 +237,14 @@ class WorkoutDataService: ObservableObject {
         return workout
     }
 
-    // MARK: - Updating Data
+    // MARK: - Update Operations
 
     /// Updates a workout with new data
     func updateWorkout(
         workoutId: String, endTime: Date? = nil, notes: String? = nil
     ) async throws {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         let workoutRef = firestore.collection("users").document(userId)
@@ -259,12 +263,12 @@ class WorkoutDataService: ObservableObject {
         }
     }
 
-    // MARK: - Deleting Data
+    // MARK: - Delete Operations
 
     /// Deletes a workout and all its associated sets and reps
     func deleteWorkout(workoutId: String) async throws {
         guard let userId = userId else {
-            throw FirestoreError.userNotAuthenticated
+            throw WorkoutServiceError.userNotAuthenticated
         }
 
         let workoutRef = firestore.collection("users").document(userId)
@@ -289,11 +293,4 @@ class WorkoutDataService: ObservableObject {
         // Finally delete the workout
         try await workoutRef.delete()
     }
-}
-
-enum FirestoreError: Error {
-    case userNotAuthenticated
-    case documentNotFound
-    case failedToSaveDocument
-    case failedToFetchDocuments
 }
