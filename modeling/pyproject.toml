@@ -1,0 +1,103 @@
+[project]
+name = "barbeloni"
+version = "0.1.0"
+description = "Modeling for barbeloni project"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aquarel>=0.0.7",
+    "beartype>=0.20.0",
+    "marimo>=0.11.14",
+    "numpy>=2.2.3",
+    "openpyxl>=3.1.5",
+    "pandas>=2.2.3",
+    "polars>=1.24.0",
+    "pydantic>=2.10.6",
+    "pyro-ppl>=1.9.1",
+    "rich>=13.9.4",
+    "scikit-learn>=1.6.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.4",
+    "torch>=2.6.0",
+    "tqdm>=4.67.1",
+    "transformers>=4.49.0",
+    "typer>=0.15.2",
+    "xgboost>=2.1.4",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "ipykernel>=6.29.5",
+    "line-profiler>=4.2.0",
+    "pre-commit>=4.1.0",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.9.9",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
+line-length = 88
+indent-width = 4
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ['ALL']
+ignore = [
+    "COM812",
+    "COM819",
+    "D100",
+    "D203",
+    "D300",
+    "E111",
+    "E114",
+    "E117",
+    "ISC001",
+    "ISC002",
+    "Q000",
+    "Q001",
+    "Q002",
+    "Q003",
+    "W191",
+    "D206",
+    "E501",
+]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
