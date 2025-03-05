@@ -261,3 +261,5 @@ DerivedData/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+*firebase*.json
