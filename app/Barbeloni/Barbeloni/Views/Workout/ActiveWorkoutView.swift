@@ -275,15 +275,15 @@ struct ActiveWorkoutView: View {
                         LineMark(
                             x: .value("Time", index),
                             y: .value(
-                                "Velocity",
+                                "Z-Velocity",
                                 sessionManager.currentSetData[index]
-                                    .velocityMagnitude())
+                                    .velocity.2)
                         )
                         .foregroundStyle(Color.blue)
                     }
                 }
                 .frame(height: 160)
-                .chartYScale(domain: 0...2.5)
+                .chartYScale(domain: -2.5...2.5)
                 // No fixed width specified, so it will adapt to the container
 
                 Text(
