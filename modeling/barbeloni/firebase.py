@@ -1,4 +1,10 @@
+import json
+from pathlib import Path
+
 import firebase_admin
+import matplotlib.pyplot as plt
+import seaborn as sns
+from aquarel import load_theme
 from firebase_admin import credentials, firestore
 
 from barbeloni.utils import settings, setup_logger
@@ -19,7 +25,7 @@ def initialize_firestore() -> firestore.Client:
     return db
 
 
-def get_workout_data(db: firestore.Client, user_id: str, workout_id: str) -> list[dict]:
+def get_workout_data(db: firestore.Client, user_id: str, workout_id: str) -> dict:
     """Retrieve workout data from Firestore."""
     logger.debug('Retrieving workout data from Firestore: %s', workout_id)
     workout_ref = (
@@ -56,7 +62,26 @@ def get_workout_data(db: firestore.Client, user_id: str, workout_id: str) -> lis
         sets.append(set_data)
 
     workout_data['sets'] = sets
-    return [workout_data]
+    return workout_data
+
+
+def save_workout_data(workout_data: dict, save_file: Path) -> None:
+    """Save workout data to a JSON file."""
+    logger.debug('Saving workout data to file: %s', save_file)
+    with save_file.open('w') as f:
+        json.dump(workout_data, f, indent=2)
+    logger.info('Workout data saved successfully')
+
+
+def plot_workout_data(workout_data: dict) -> None:
+    """Plot workout data."""
+    with load_theme('scientific'):
+        for set_data in workout_data['sets']:
+            # set_data.keys =['reps', 'velocityZ', 'velocityY', 'endTime', 'userId', 'accelerationX',
+            # 'exerciseType', 'startTime', 'accelerationY', 'velocityX', 'timestamps',
+            # 'accelerationZ', 'weight', 'id']
+            sns.lineplot(x=set_data['timestamps'], y=set_data['velocityZ'])
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -64,6 +89,5 @@ if __name__ == '__main__':
     workout_data = get_workout_data(
         db, 'rjGc2FYrVSeXNnPvXXd4XqvB0Zf2', 'b25UqZf0kY2y1PAomXbj'
     )
-    import rich
-
-    rich.print(workout_data)
+    # save_workout_data(workout_data, Path('250506_workout_data.json'))
+    plot_workout_data(workout_data)
