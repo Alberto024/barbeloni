@@ -57,6 +57,8 @@ class WorkoutViewModel: ObservableObject {
 
     /// Deletes a workout
     func deleteWorkout(workoutId: String) async -> Bool {
+        guard !workoutId.isEmpty else { return false }
+
         await MainActor.run {
             isLoading = true
             errorMessage = nil

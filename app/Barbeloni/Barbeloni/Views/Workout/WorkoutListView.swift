@@ -2,6 +2,8 @@ import SwiftUI
 
 struct WorkoutListView: View {
     @ObservedObject var viewModel: WorkoutViewModel
+    @State private var showingDeleteConfirmation = false
+    @State private var workoutToDelete: WorkoutData?
 
     var body: some View {
         Group {
@@ -17,11 +19,39 @@ struct WorkoutListView: View {
                 List {
                     ForEach(viewModel.workouts) { workout in
                         NavigationLink(
-                            destination: WorkoutDetailView(workout: workout)
+                            destination: WorkoutDetailView(
+                                workout: workout,
+                                viewModel: viewModel
+                            )
                         ) {
                             WorkoutRowView(workout: workout)
                         }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                workoutToDelete = workout
+                                showingDeleteConfirmation = true
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
                     }
+                }
+                .alert(
+                    "Delete Workout", isPresented: $showingDeleteConfirmation
+                ) {
+                    Button("Cancel", role: .cancel) {}
+                    Button("Delete", role: .destructive) {
+                        if let workout = workoutToDelete {
+                            Task {
+                                await viewModel.deleteWorkout(
+                                    workoutId: workout.id ?? "")
+                            }
+                        }
+                    }
+                } message: {
+                    Text(
+                        "Are you sure you want to delete this workout? This action cannot be undone and will remove all associated sets and reps."
+                    )
                 }
             }
         }
@@ -84,6 +114,9 @@ struct WorkoutRowView: View {
 
 struct WorkoutDetailView: View {
     let workout: WorkoutData
+    @ObservedObject var viewModel: WorkoutViewModel
+    @Environment(\.dismiss) private var dismiss
+    @State private var showingDeleteConfirmation = false
 
     var body: some View {
         ScrollView {
@@ -129,10 +162,39 @@ struct WorkoutDetailView: View {
                         SetCardView(set: set)
                     }
                 }
+
+                // Delete Workout Button
+                Button(action: {
+                    showingDeleteConfirmation = true
+                }) {
+                    Label("Delete Workout", systemImage: "trash")
+                        .foregroundColor(.red)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.red.opacity(0.1))
+                        .cornerRadius(10)
+                }
+                .padding(.top, 20)
             }
             .padding()
         }
         .navigationTitle("Workout Details")
+        .alert("Delete Workout", isPresented: $showingDeleteConfirmation) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                Task {
+                    let success = await viewModel.deleteWorkout(
+                        workoutId: workout.id ?? "")
+                    if success {
+                        dismiss()
+                    }
+                }
+            }
+        } message: {
+            Text(
+                "Are you sure you want to delete this workout? This action cannot be undone and will remove all associated sets and reps."
+            )
+        }
     }
 
     private func formattedDate(_ date: Date) -> String {
